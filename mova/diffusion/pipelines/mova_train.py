@@ -1386,10 +1386,18 @@ class MOVATrain(BasePipeline, DiffusionPipeline):
             mode_scale=1.0,
             independent_timesteps=False,
         )
+        # The sigma_shift formula in flow_match.py L57:
+        #   sigma_shifted = shift * sigma_linear / (1 + (shift - 1) * sigma_linear)
+        # boundary_ratio is in shifted space; invert to get sigma_linear:
+        #   sigma_linear = boundary_ratio / (shift - (shift - 1) * boundary_ratio)
+        # index_boundary = 1 - sigma_linear, which simplifies to:
+        #   shift * (1 - boundary_ratio) / (1 + (shift - 1) * (1 - boundary_ratio))
+        # e.g. shift=3, boundary_ratio=0.9 => sigma_linear=0.75 => index=0.25
+        boundary = self.scheduler.shift * (1 - self.boundary_ratio) / (1 + (self.scheduler.shift - 1) * (1 - self.boundary_ratio))
         if global_step % 2 == 0:
-            timestep_config.max_timestep_boundary = self.boundary_ratio
+            timestep_config.max_timestep_boundary = boundary
         else:
-            timestep_config.min_timestep_boundary = self.boundary_ratio
+            timestep_config.min_timestep_boundary = boundary
 
         timestep, audio_timestep = self.sample_timestep_pair(timestep_config)
         timestep = timestep.to(device=device)
