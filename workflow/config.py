@@ -74,6 +74,25 @@ GEMINI_MODEL = os.environ.get(
 )
 
 # ============================================================================
+# MiniMax API Configuration (OpenAI-compatible alternative for prompt tasks)
+# ============================================================================
+
+MINIMAX_API_KEY = os.environ.get(
+    'MINIMAX_API_KEY',
+    ''
+)
+
+MINIMAX_BASE_URL = os.environ.get(
+    'MINIMAX_BASE_URL',
+    'https://api.minimax.io/v1'
+)
+
+MINIMAX_MODEL = os.environ.get(
+    'MINIMAX_MODEL',
+    'MiniMax-M2.7'
+)
+
+# ============================================================================
 # DashScope API Configuration (Qwen VL / Z-Image / qwen-plus 等)
 # 北京地域默认；可设 DASHSCOPE_BASE_URL 换地域（如新加坡、美国）
 # ============================================================================

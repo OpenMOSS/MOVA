@@ -34,7 +34,12 @@ try:
 except ImportError:
     dashscope = None
 
-from config import DASHSCOPE_MULTIMODAL_GENERATION_URL, GEMINI_API_URL, GEMINI_MODEL
+try:
+    from openai import OpenAI as _OpenAI
+except ImportError:
+    _OpenAI = None
+
+from config import DASHSCOPE_MULTIMODAL_GENERATION_URL, GEMINI_API_URL, GEMINI_MODEL, MINIMAX_BASE_URL, MINIMAX_MODEL
 from api_utils import setup_dashscope_url, resolve_api_keys
 
 
@@ -187,6 +192,51 @@ def generate_image_prompt_qwen(
 
     content = response.output.choices[0].message.content
     image_prompt = (content or "").strip()
+    if not image_prompt:
+        raise ValueError("API返回了空的提示词")
+
+    return image_prompt
+
+
+def generate_image_prompt_minimax(
+    user_input: str,
+    api_key: str,
+    model: str = "MiniMax-M2.7",
+    base_url: str = None,
+) -> str:
+    """
+    使用 MiniMax OpenAI-compatible API 生成首帧图提示词。
+
+    Args:
+        user_input: 用户原始输入
+        api_key: MiniMax API Key
+        model: 模型名称，默认 MiniMax-M2.7
+        base_url: API base URL（可选，默认 https://api.minimax.io/v1）
+
+    Returns:
+        首帧图生成提示词
+    """
+    if _OpenAI is None:
+        raise ImportError("使用 MiniMax 需安装 openai: pip install openai")
+
+    client = _OpenAI(
+        api_key=api_key,
+        base_url=base_url or MINIMAX_BASE_URL,
+    )
+
+    user_prompt = IMAGE_PROMPT_USER.format(user_input=user_input)
+
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": IMAGE_PROMPT_SYSTEM},
+            {"role": "user", "content": user_prompt},
+        ],
+        temperature=0.7,
+    )
+
+    content = response.choices[0].message.content or ""
+    image_prompt = content.strip()
     if not image_prompt:
         raise ValueError("API返回了空的提示词")
 
@@ -394,6 +444,8 @@ def main():
     full_parser.add_argument('--api-url', type=str, default=None, help='Gemini API base URL（使用 Gemini 时必填）')
     full_parser.add_argument('--qwen-api-key', type=str, default=None,
                             help='DashScope/Qwen API key，用于 Z-Image；无 Gemini key 时使用')
+    full_parser.add_argument('--minimax-api-key', type=str, default=None,
+                            help='MiniMax API key，用于提示词生成（无 Gemini/Qwen key 时使用）')
     full_parser.add_argument('--pro-model', type=str, default=None, help='提示词生成模型（默认: gemini-2.5-pro，仅 Gemini）')
     full_parser.add_argument('--aspect-ratio', type=str, choices=['16:9', '9:16'], default='16:9',
                             help='宽高比 (默认: 16:9)')
@@ -404,6 +456,7 @@ def main():
     prompt_parser.add_argument('--api-url', type=str, default=None, help='Gemini API base URL（使用 Gemini 时必填）')
     prompt_parser.add_argument('--api-key', type=str, default=None, help='Gemini API key（与 --qwen-api-key 二选一）')
     prompt_parser.add_argument('--qwen-api-key', type=str, default=None, help='DashScope API key，使用 qwen-plus 生成提示词')
+    prompt_parser.add_argument('--minimax-api-key', type=str, default=None, help='MiniMax API key，用于提示词生成')
     prompt_parser.add_argument('--model', type=str, default=None, help='模型名称（Gemini 默认: gemini-2.5-pro；Qwen 默认: qwen-plus）')
     prompt_parser.add_argument('--output', type=str, default=None, help='输出文件路径（不指定则输出到 stdout）')
 
@@ -430,7 +483,11 @@ def main():
     try:
         if args.command == 'full':
             output_path = args.output or DEFAULT_OUTPUT
-            gemini_key, qwen_key = resolve_api_keys(args.api_key, getattr(args, "qwen_api_key", None))
+            gemini_key, qwen_key, minimax_key = resolve_api_keys(
+                args.api_key,
+                getattr(args, "qwen_api_key", None),
+                getattr(args, "minimax_api_key", None),
+            )
 
             if gemini_key and args.api_url:
                 # 有 Gemini key：先生成提示词，再用 Gemini 或 Z-Image 生图
@@ -448,8 +505,16 @@ def main():
                     api_key=qwen_key,
                     model="qwen-plus",
                 )
+            elif minimax_key:
+                # 使用 MiniMax 生成提示词（仍需要 Gemini/Qwen key 生成图片）
+                print("📝 使用 MiniMax 生成首帧图提示词", file=sys.stderr)
+                image_prompt = generate_image_prompt_minimax(
+                    user_input=args.user_input,
+                    api_key=minimax_key,
+                    model=MINIMAX_MODEL,
+                )
             else:
-                raise ValueError("请提供 --api-key (Gemini) 或 --qwen-api-key (DashScope)")
+                raise ValueError("请提供 --api-key (Gemini)、--qwen-api-key (DashScope) 或 --minimax-api-key (MiniMax)")
 
             aspect_ratio = args.aspect_ratio  # Use explicit parameter or default '16:9'
             image_path = generate_image(
@@ -469,7 +534,11 @@ def main():
             print(f"\n✅ 首帧图已保存: {image_path}")
 
         elif args.command == 'prompt':
-            gemini_key, qwen_key = resolve_api_keys(args.api_key, getattr(args, "qwen_api_key", None))
+            gemini_key, qwen_key, minimax_key = resolve_api_keys(
+                args.api_key,
+                getattr(args, "qwen_api_key", None),
+                getattr(args, "minimax_api_key", None),
+            )
             if gemini_key and args.api_url:
                 image_prompt = generate_image_prompt(
                     user_input=args.user_input,
@@ -483,8 +552,14 @@ def main():
                     api_key=qwen_key,
                     model=args.model or "qwen-plus",
                 )
+            elif minimax_key:
+                image_prompt = generate_image_prompt_minimax(
+                    user_input=args.user_input,
+                    api_key=minimax_key,
+                    model=args.model or MINIMAX_MODEL,
+                )
             else:
-                raise ValueError("请提供 --api-key (Gemini) 或 --qwen-api-key (DashScope)")
+                raise ValueError("请提供 --api-key (Gemini)、--qwen-api-key (DashScope) 或 --minimax-api-key (MiniMax)，或设置环境变量")
             if args.output:
                 Path(args.output).parent.mkdir(parents=True, exist_ok=True)
                 with open(args.output, 'w', encoding='utf-8') as f:

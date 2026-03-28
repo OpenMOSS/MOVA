@@ -28,7 +28,13 @@ try:
 except ImportError:
     dashscope = None
 
+try:
+    from openai import OpenAI as _OpenAI
+except ImportError:
+    _OpenAI = None
+
 from api_utils import setup_dashscope_url, resolve_api_keys
+from config import MINIMAX_BASE_URL, MINIMAX_MODEL
 
 # ============================================================================
 # System Prompt - 基于首帧图元素生成VIDEO_DESCRIPTION
@@ -255,6 +261,58 @@ def generate_video_description_qwen(
 
     return video_description
 
+
+def generate_video_description_minimax(
+    user_input: str,
+    first_frame_elements: str,
+    api_key: str,
+    model: str = "MiniMax-M2.7",
+    base_url: str = None,
+) -> str:
+    """
+    使用 MiniMax OpenAI-compatible API 生成 VIDEO_DESCRIPTION。
+    文档: https://platform.minimaxi.com/document/chat-completion-v2
+
+    Args:
+        user_input: 用户原始输入
+        first_frame_elements: 首帧图视觉元素描述
+        api_key: MiniMax API Key
+        model: 模型名称，默认 MiniMax-M2.7
+        base_url: API base URL（可选，默认 https://api.minimax.io/v1）
+
+    Returns:
+        VIDEO_DESCRIPTION 文本
+    """
+    if _OpenAI is None:
+        raise ImportError("使用 MiniMax 需安装 openai: pip install openai")
+
+    client = _OpenAI(
+        api_key=api_key,
+        base_url=base_url or MINIMAX_BASE_URL,
+    )
+
+    user_prompt = USER_PROMPT.format(
+        first_frame_elements=first_frame_elements,
+        user_input=user_input
+    )
+
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": SYSTEM_INSTRUCTION},
+            {"role": "user", "content": user_prompt},
+        ],
+        temperature=0.7,
+    )
+
+    content = response.choices[0].message.content or ""
+    video_description = content.strip()
+    if not video_description:
+        raise ValueError("API返回了空的VIDEO_DESCRIPTION")
+
+    return video_description
+
+
 # ============================================================================
 # 命令行接口
 # ============================================================================
@@ -307,7 +365,13 @@ def main():
         '--model',
         type=str,
         default=None,
-        help='模型名称（Gemini 默认: gemini-2.5-pro；Qwen 默认: qwen-plus）'
+        help='模型名称（Gemini 默认: gemini-2.5-pro；Qwen 默认: qwen-plus；MiniMax 默认: MiniMax-M2.7）'
+    )
+    parser.add_argument(
+        '--minimax-api-key',
+        type=str,
+        default=None,
+        help='MiniMax API 密钥（OpenAI-compatible，无 Gemini/Qwen 时使用）'
     )
     parser.add_argument(
         '--output',
@@ -347,7 +411,11 @@ def main():
         print(f"   首帧图元素: {first_frame_elements[:100]}...", file=sys.stderr)
         print("", file=sys.stderr)
 
-        gemini_key, qwen_key = resolve_api_keys(args.api_key, getattr(args, "qwen_api_key", None))
+        gemini_key, qwen_key, minimax_key = resolve_api_keys(
+            args.api_key,
+            getattr(args, "qwen_api_key", None),
+            getattr(args, "minimax_api_key", None),
+        )
 
         if gemini_key and args.api_url:
             video_description = generate_video_description(
@@ -365,8 +433,16 @@ def main():
                 api_key=qwen_key,
                 model=args.model or "qwen-plus",
             )
+        elif minimax_key:
+            print("   使用 MiniMax 生成视频描述", file=sys.stderr)
+            video_description = generate_video_description_minimax(
+                user_input=args.user_input,
+                first_frame_elements=first_frame_elements,
+                api_key=minimax_key,
+                model=args.model or MINIMAX_MODEL,
+            )
         else:
-            raise ValueError("请提供 --api-key (Gemini) 或 --qwen-api-key (DashScope)，或设置环境变量")
+            raise ValueError("请提供 --api-key (Gemini)、--qwen-api-key (DashScope) 或 --minimax-api-key (MiniMax)，或设置环境变量")
         
         # 输出结果
         if args.output:

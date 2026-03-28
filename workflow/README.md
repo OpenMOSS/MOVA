@@ -43,8 +43,9 @@ Edit `config.py` to set:
 - **API Keys** (optional, for Full Workflow):
   - `GEMINI_API_KEY` + `GEMINI_API_URL`: Gemini API (recommended; fill base URL when using proxy)
   - `DASHSCOPE_API_KEY` + `DASHSCOPE_BASE_URL`: Qwen/DashScope API (base URL for region, e.g. Singapore/US)
+  - `MINIMAX_API_KEY`: [MiniMax](https://platform.minimaxi.com/) API for prompt generation (OpenAI-compatible; uses MiniMax-M2.7 by default)
 
-> **Note (API Key Fallback):** If you do **not** provide a Gemini API key, the workflow will automatically use the Qwen (DashScope) API key to call qwen-plus and Z-Image for prompt generation and first frame generation. **We still recommend using a Gemini API key** for better quality.
+> **Note (API Key Fallback):** If you do **not** provide a Gemini API key, the workflow will automatically use the Qwen (DashScope) API key to call qwen-plus and Z-Image for prompt generation and first frame generation. Alternatively, you can use a **MiniMax API key** (`MINIMAX_API_KEY`) for prompt rewriting and image prompt generation via MiniMax's OpenAI-compatible API. **We still recommend using a Gemini API key** for best quality.
 
 #### Step 3: Start Streamlit App
 
@@ -67,9 +68,9 @@ Open the URL shown in the terminal (e.g., http://localhost:8500) and use the web
 | `api_utils.py` | Shared API helpers (DashScope URL setup, API key resolution) |
 | `config.py` | Server URLs, API keys, default parameters |
 | `sglang_client.py` | SGLang video API client |
-| `generate_first_frame.py` | Image prompt + first frame generation (Gemini or qwen-plus + Z-Image) |
+| `generate_first_frame.py` | Image prompt + first frame generation (Gemini, qwen-plus, or MiniMax + Z-Image) |
 | `qwen_vl_api.py` | Visual element extraction from image (Qwen3-VL) |
-| `prompt_rewriter_with_image.py` | Video description rewriting (Gemini or qwen-plus) |
+| `prompt_rewriter_with_image.py` | Video description rewriting (Gemini, qwen-plus, or MiniMax) |
 | `launch_sglang_server.sh` | SGLang server launcher (set `MOVA_MODEL_PATH` to your checkpoint dir) |
 | `launch_streamlit.sh` | Streamlit app launcher |
 
@@ -114,8 +115,9 @@ export MOVA_MODEL_PATH="/path/to/your/MOVA-360p-hf"   # 或 MOVA-720p-hf
 - **API 密钥**（可选，完整工作流需要）：
   - `GEMINI_API_KEY` + `GEMINI_API_URL`：Gemini API（推荐；使用代理时需填写 base URL）
   - `DASHSCOPE_API_KEY` + `DASHSCOPE_BASE_URL`：通义千问 / DashScope API（base URL 可选，用于指定地域如新加坡/美国）
+  - `MINIMAX_API_KEY`：[MiniMax](https://platform.minimaxi.com/) API，用于提示词生成（OpenAI 兼容接口；默认使用 MiniMax-M2.7）
 
-> **说明（API 密钥回退）：** 若不提供 Gemini API 密钥，工作流会自动使用 Qwen（DashScope）API 密钥调用 qwen-plus 和 Z-Image 完成提示词生成和首帧图生成。**我们仍推荐使用 Gemini API 密钥**以获得更好效果。
+> **说明（API 密钥回退）：** 若不提供 Gemini API 密钥，工作流会自动使用 Qwen（DashScope）API 密钥调用 qwen-plus 和 Z-Image 完成提示词生成和首帧图生成。也可使用 **MiniMax API 密钥**（`MINIMAX_API_KEY`）通过 MiniMax 的 OpenAI 兼容 API 完成提示词改写和首帧图提示词生成。**我们仍推荐使用 Gemini API 密钥**以获得更好效果。
 
 #### 第三步：启动 Streamlit 应用
 
@@ -138,8 +140,8 @@ export MOVA_MODEL_PATH="/path/to/your/MOVA-360p-hf"   # 或 MOVA-720p-hf
 | `api_utils.py` | API 工具（DashScope URL 设置、API Key 解析等） |
 | `config.py` | 服务 URL、API 密钥、默认参数 |
 | `sglang_client.py` | SGLang 视频 API 客户端 |
-| `generate_first_frame.py` | 首帧图提示词与生成（Gemini 或 qwen-plus + Z-Image） |
+| `generate_first_frame.py` | 首帧图提示词与生成（Gemini、qwen-plus 或 MiniMax + Z-Image） |
 | `qwen_vl_api.py` | 从图片提取视觉元素（Qwen3-VL） |
-| `prompt_rewriter_with_image.py` | 视频描述改写（Gemini 或 qwen-plus） |
+| `prompt_rewriter_with_image.py` | 视频描述改写（Gemini、qwen-plus 或 MiniMax） |
 | `launch_sglang_server.sh` | SGLang 服务启动脚本（需设置环境变量 `MOVA_MODEL_PATH` 为模型目录） |
 | `launch_streamlit.sh` | Streamlit 应用启动脚本 |

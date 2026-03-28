@@ -12,17 +12,19 @@ from config import DASHSCOPE_BASE_URL
 def resolve_api_keys(
     api_key: Optional[str] = None,
     qwen_api_key: Optional[str] = None,
-) -> Tuple[str, str]:
+    minimax_api_key: Optional[str] = None,
+) -> Tuple[str, str, str]:
     """
-    统一解析 Gemini 和 DashScope/Qwen API Key。
+    统一解析 Gemini、DashScope/Qwen 和 MiniMax API Key。
     优先级：参数 > 环境变量
 
     Returns:
-        (gemini_key, qwen_key)
+        (gemini_key, qwen_key, minimax_key)
     """
     gemini = (api_key or "").strip() or os.getenv("GEMINI_API_KEY", "")
     qwen = (qwen_api_key or "").strip() or os.getenv("DASHSCOPE_API_KEY", "")
-    return gemini, qwen
+    minimax = (minimax_api_key or "").strip() or os.getenv("MINIMAX_API_KEY", "")
+    return gemini, qwen, minimax
 
 
 def setup_dashscope_url(base_url: Optional[str] = None) -> None:

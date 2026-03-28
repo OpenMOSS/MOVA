@@ -22,6 +22,7 @@ from config import (
     GEMINI_API_URL,
     GEMINI_API_KEY,
     QWEN_VL_API_KEY,
+    MINIMAX_API_KEY,
     POLL_INTERVAL,
     TASK_TIMEOUT,
     OUTPUT_DIR,
@@ -225,19 +226,26 @@ def render_sidebar() -> Dict[str, Any]:
             value=GEMINI_API_URL,
             type="default"
         )
-        
+
         gemini_api_key = st.text_input(
             "Gemini API Key",
             value=GEMINI_API_KEY or "",
             type="password"
         )
-        
+
         qwen_key = st.text_input(
             "Qwen API Key",
             value=QWEN_VL_API_KEY or "",
             type="password"
         )
-    
+
+        minimax_key = st.text_input(
+            "MiniMax API Key",
+            value=MINIMAX_API_KEY or "",
+            type="password",
+            help="MiniMax API key for prompt generation (OpenAI-compatible). Get one at https://platform.minimaxi.com/"
+        )
+
     return {
         'server_key': server_key,
         'video_size': video_size,
@@ -249,7 +257,8 @@ def render_sidebar() -> Dict[str, Any]:
         'num_inference_steps': num_inference_steps,
         'gemini_url': gemini_url,
         'gemini_api_key': gemini_api_key,
-        'qwen_key': qwen_key
+        'qwen_key': qwen_key,
+        'minimax_key': minimax_key
     }
 
 
@@ -480,8 +489,9 @@ def run_full_workflow(user_input: str, uploaded_file, config: Dict[str, Any]):
             # 优先使用 Gemini：有 Gemini key 时始终用 Gemini；仅当无 Gemini 时才用 Qwen/Z-Image
             gemini_key = (config.get('gemini_api_key') or '').strip()
             qwen_key = (config.get('qwen_key') or '').strip()
+            minimax_key = (config.get('minimax_key') or '').strip()
             spinner_msg = "🔄 Generating image prompt and first frame..." + (
-                " (Gemini)" if gemini_key else " (通义 qwen-plus + Z-Image)"
+                " (Gemini)" if gemini_key else (" (MiniMax + Z-Image)" if minimax_key and not qwen_key else " (通义 qwen-plus + Z-Image)")
             )
             with st.spinner(spinner_msg):
                 # Map orientation to aspect ratio for first frame generation
@@ -498,6 +508,8 @@ def run_full_workflow(user_input: str, uploaded_file, config: Dict[str, Any]):
                     cmd.extend(['--api-key', gemini_key, '--api-url', config['gemini_url']])
                 if qwen_key:
                     cmd.extend(['--qwen-api-key', qwen_key])
+                if minimax_key:
+                    cmd.extend(['--minimax-api-key', minimax_key])
                 first_frame_result = subprocess.run(
                     cmd,
                     capture_output=True,
@@ -575,6 +587,8 @@ def run_full_workflow(user_input: str, uploaded_file, config: Dict[str, Any]):
                 rewriter_cmd.extend(['--api-url', config['gemini_url'], '--api-key', config['gemini_api_key']])
             if (config.get('qwen_key') or '').strip():
                 rewriter_cmd.extend(['--qwen-api-key', config['qwen_key']])
+            if (config.get('minimax_key') or '').strip():
+                rewriter_cmd.extend(['--minimax-api-key', config['minimax_key']])
             rewriter_result = subprocess.run(
                 rewriter_cmd,
                 capture_output=True,
