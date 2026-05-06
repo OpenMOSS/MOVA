@@ -1,0 +1,1 @@
+CLAP checkpoint removed

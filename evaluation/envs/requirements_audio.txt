@@ -1,0 +1,38 @@
+# MOVA Eval - Audio IS + CLAP metrics
+# Python 3.10+, CUDA 12.x
+# Install: conda create -n mova_eval_audio python=3.10 -y && pip install -r requirements_audio.txt
+# Then install vendored packages:
+#   pip install -e ./models/clap --no-deps
+
+# Core
+torch>=2.3.0
+torchvision>=0.18.0
+torchaudio>=2.3.0
+numpy>=1.24.0
+tqdm>=4.65.0
+
+# Audio processing
+librosa>=0.10.0
+soundfile>=0.12.0
+pyloudnorm>=0.1.0
+
+# PANNs for IS
+panns-inference>=0.1.0
+torchlibrosa>=0.1.0
+
+# CLAP for audio-text alignment
+# laion-clap is installed from the vendored copy in models/clap/
+# Install with: pip install -e ./models/clap
+# Its transitive deps are listed below for reference:
+ftfy>=6.1.0
+regex>=2023.0
+scipy>=1.10.0
+scikit-learn>=1.2.0
+pandas>=2.2.0
+h5py>=3.8.0
+webdataset>=1.0.0
+wget>=3.2
+progressbar2>=3.0
+
+# Text encoder (used by CLAP)
+transformers>=4.45.0

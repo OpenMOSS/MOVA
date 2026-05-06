@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Model checkpoints and weights (download via scripts/download_weights.sh)
+*.pth
+*.pth.bak
+*.pt
+*.onnx
+*.bin
+*.safetensors
+*.h5
+*.ot
+*.msgpack
+*.model
+!metrics/dnsmos/DNSMOS/*.onnx
+!metrics/dnsmos/pDNSMOS/*.onnx
+# Roberta-base model weight (download via scripts/download_weights.sh)
+# models/roberta-base/pytorch_model.bin
+
+# Core dumps
+core.*
+
+# Eval results and per-video scores
+*_score.json
+*_visual_score.json
+eval_*_results.json
+quality_assess.csv
+000eval_*
+generation_state.json
+prompts.json
+
+# Video and audio files
+*.mp4
+*.wav
+*.avi
+
+# Temporary files
+tmp*/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+._*
+
+# Large notebooks (not essential for evaluation)
+*.ipynb
+
+# Internal documents (not for open source)
+*公共可见*
+*_Grid.csv
+.sii/ide-port
+
+# Prompt files with local paths (users should create their own)
+# verse_bench_prompts.json is included with cleaned paths
+
+# Downloaded models (use download_weights.sh instead)
+models/Qwen2-VL-2B-Instruct/
+models/.lock/

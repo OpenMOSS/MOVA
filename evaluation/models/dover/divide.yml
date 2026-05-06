@@ -1,0 +1,90 @@
+name: DOVER
+num_epochs: 20
+l_num_epochs: 10
+warmup_epochs: 2.5
+ema: true
+save_model: true
+batch_size: 16
+num_workers: 8
+split_seed: 42
+
+wandb:
+    project_name: DOVER
+
+data:   
+    val-dividemaxwell:
+        type: ViewDecompositionDataset
+        args:
+            weight: 0.572
+            phase: test
+            anno_file: ./examplar_data_labels/DIVIDE_MaxWell/val_labels.txt
+            data_prefix: ../datasets/DIVIDE_MaxWell/videos/
+            sample_types:
+                technical:
+                    fragments_h: 7
+                    fragments_w: 7
+                    fsize_h: 32
+                    fsize_w: 32
+                    aligned: 32
+                    clip_len: 32
+                    frame_interval: 2
+                    num_clips: 3
+                aesthetic:
+                    size_h: 224
+                    size_w: 224
+                    clip_len: 32
+                    frame_interval: 2
+                    t_frag: 32
+                    num_clips: 1
+    train-dividemaxwell:
+        type: ViewDecompositionDataset
+        args:
+            weight: 0.598
+            phase: train
+            fully_supervised: True
+            anno_file: ./examplar_data_labels/DIVIDE_MaxWell/train_labels.txt
+            data_prefix: ../datasets/DIVIDE_MaxWell/videos/
+            sample_types:
+                technical:
+                    fragments_h: 7
+                    fragments_w: 7
+                    fsize_h: 32
+                    fsize_w: 32
+                    aligned: 32
+                    clip_len: 32
+                    frame_interval: 2
+                    num_clips: 1
+                aesthetic:
+                    size_h: 224
+                    size_w: 224
+                    clip_len: 32
+                    frame_interval: 2
+                    t_frag: 32
+                    num_clips: 1
+
+
+model:
+    type: DOVER
+    args:
+        backbone:
+            technical:
+                type: swin_tiny_grpb
+                checkpoint: true
+                pretrained:
+            aesthetic:
+                type: conv_tiny
+        backbone_preserve_keys: technical,aesthetic
+        divide_head: true
+        vqa_head:
+            in_channels: 768
+            hidden_channels: 64
+            
+optimizer:
+    lr: !!float 1e-3
+    backbone_lr_mult: !!float 1e-1
+    wd: 0.05
+        
+test_load_path: ./pretrained_weights/DOVER.pth
+
+    
+        

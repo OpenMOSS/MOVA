@@ -1,0 +1,26 @@
+# MOVA Eval - DNSMOS + Audio Amplitude metrics
+# Python 3.10+, CUDA 12.x (onnxruntime-gpu optional)
+# Install: conda create -n mova_eval_dnsmos python=3.10 -y && pip install -r requirements_dnsmos.txt
+
+# Core
+torch>=2.3.0
+numpy>=1.24.0
+tqdm>=4.65.0
+
+# Audio processing
+librosa>=0.10.0
+soundfile>=0.12.0
+
+# DNSMOS (ONNX inference)
+onnxruntime>=1.16.0
+
+# Audio Amplitude
+torchcodec>=0.6.0
+torchaudio>=2.3.0
+
+# Loudness (fallback when audiotools unavailable)
+pyloudnorm>=0.1.0
+
+# Optional: audiotools for more accurate loudness
+# Install separately if needed:
+#   pip install descript-audiotools

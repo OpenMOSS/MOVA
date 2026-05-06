@@ -1,0 +1,29 @@
+# MOVA Eval - VideoReward metrics
+# Python 3.10+, CUDA 12.x
+# Install: conda create -n mova_eval_visual python=3.10 -y && pip install -r requirements_visual.txt
+
+# Core
+torch>=2.3.0
+torchvision>=0.18.0
+torchaudio>=2.3.0
+numpy>=1.24.0
+tqdm>=4.65.0
+
+# Model loading & inference
+transformers>=4.45.0
+peft>=0.10.0
+safetensors>=0.4.0
+accelerate>=0.34.0
+
+# Video/image processing
+decord>=0.6.0
+opencv-python-headless>=4.8.0
+pillow>=10.0.0
+packaging>=24.0
+
+# Data
+pandas>=2.2.0
+
+# Misc
+requests>=2.31.0
+colorlog>=6.0.0

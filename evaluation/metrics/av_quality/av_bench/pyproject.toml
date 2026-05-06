@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "av_bench"
+version = "0.1.0"
+description = "Audio-visual quality metrics (DeSync, IB-Score, AV-Align)"
+requires-python = ">=3.9"
+
+[tool.setuptools.packages.find]
+include = ["av_bench*"]

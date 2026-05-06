@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[project]
+name = "imagebind"
+version = "1.0.0"
+description = "Fork of ImageBind"
+requires-python = ">=3.9"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  'torch>=1.13.1',
+  'torchvision',
+  'torchaudio',
+  'timm >= 1.0.12',
+  'ftfy',
+  'regex',
+  'einops',
+  'fvcore',
+  'iopath',
+  'numpy>=1.19',
+  'matplotlib',
+  'types-regex',
+  'cartopy',
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["imagebind"]

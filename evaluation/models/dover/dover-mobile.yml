@@ -1,0 +1,190 @@
+name: DOVER-Mobile
+num_epochs: 20
+l_num_epochs: 10
+warmup_epochs: 2.5
+ema: true
+save_model: true
+batch_size: 8
+num_workers: 6
+split_seed: 42
+
+wandb:
+    project_name: DOVER
+
+data:
+    val-livevqc:
+        type: ViewDecompositionDataset
+        args:
+            weight: 0.598
+            phase: test
+            anno_file: ./examplar_data_labels/LIVE_VQC/labels.txt
+            data_prefix: ../datasets/LIVE_VQC/
+            sample_types:
+                technical:
+                    fragments_h: 7
+                    fragments_w: 7
+                    fsize_h: 32
+                    fsize_w: 32
+                    aligned: 32 #0
+                    clip_len: 32 #0
+                    frame_interval: 2
+                    num_clips: 3
+                aesthetic:
+                    size_h: 224
+                    size_w: 224
+                    clip_len: 32
+                    frame_interval: 2
+                    t_frag: 32
+                    num_clips: 1
+                    
+    val-kv1k:
+        type: ViewDecompositionDataset
+        args:
+            weight: 0.540
+            phase: test
+            anno_file: ./examplar_data_labels/KoNViD/labels.txt
+            data_prefix: ../datasets/KoNViD/
+            sample_types:
+                technical:
+                    fragments_h: 7
+                    fragments_w: 7
+                    fsize_h: 32
+                    fsize_w: 32
+                    aligned: 32 #0
+                    clip_len: 32 #0
+                    frame_interval: 2
+                    num_clips: 3
+                aesthetic:
+                    size_h: 224
+                    size_w: 224
+                    clip_len: 32
+                    frame_interval: 2
+                    t_frag: 32
+                    num_clips: 1
+    val-ltest:
+        type: ViewDecompositionDataset
+        args:
+            weight: 0.603
+            phase: test
+            anno_file: ./examplar_data_labels/LSVQ/labels_test.txt
+            data_prefix: ../datasets/LSVQ/
+            sample_types:
+                technical:
+                    fragments_h: 7
+                    fragments_w: 7
+                    fsize_h: 32
+                    fsize_w: 32
+                    aligned: 32 #0
+                    clip_len: 32 #0
+                    frame_interval: 2
+                    num_clips: 3
+                aesthetic:
+                    size_h: 224
+                    size_w: 224
+                    clip_len: 32
+                    frame_interval: 2
+                    t_frag: 32
+                    num_clips: 1
+    val-l1080p:
+        type: ViewDecompositionDataset
+        args:
+            weight: 0.620
+            phase: test
+            anno_file: ./examplar_data_labels/LSVQ/labels_1080p.txt
+            data_prefix: ../datasets/LSVQ/
+            sample_types:
+                technical:
+                    fragments_h: 7
+                    fragments_w: 7
+                    fsize_h: 32
+                    fsize_w: 32
+                    aligned: 32 #0
+                    clip_len: 32 #0
+                    frame_interval: 2
+                    num_clips: 3
+                aesthetic:
+                    size_h: 224
+                    size_w: 224
+                    clip_len: 32
+                    frame_interval: 2
+                    t_frag: 32
+                    num_clips: 1
+
+    val-cvd2014:
+        type: ViewDecompositionDataset
+        args:
+            weight: 0.576
+            phase: test
+            anno_file: ./examplar_data_labels/CVD2014/labels.txt
+            data_prefix: ../datasets/CVD2014/
+            sample_types:
+                technical:
+                    fragments_h: 7
+                    fragments_w: 7
+                    fsize_h: 32
+                    fsize_w: 32
+                    aligned: 32 #0
+                    clip_len: 32 #0
+                    frame_interval: 2
+                    num_clips: 3
+                aesthetic:
+                    size_h: 224
+                    size_w: 224
+                    clip_len: 32
+                    frame_interval: 2
+                    t_frag: 32
+                    num_clips: 1
+                    
+    val-ytugc:
+        type: ViewDecompositionDataset
+        args:
+            weight: 0.443
+            phase: test
+            anno_file: ./examplar_data_labels/YouTubeUGC/labels.txt
+            data_prefix: ../datasets/YouTubeUGC/
+            sample_types:
+                technical:
+                    fragments_h: 7
+                    fragments_w: 7
+                    fsize_h: 32
+                    fsize_w: 32
+                    aligned: 32 #0
+                    clip_len: 32 #0
+                    frame_interval: 2
+                    num_clips: 3
+                aesthetic:
+                    size_h: 224
+                    size_w: 224
+                    clip_len: 32
+                    frame_interval: 2
+                    t_frag: 32
+                    num_clips: 1
+                    
+
+
+
+
+
+model:
+    type: DOVER
+    args:
+        backbone:
+            technical:
+                type: conv_femto
+            aesthetic:
+                type: conv_femto
+        backbone_preserve_keys: technical,aesthetic
+        divide_head: true
+        vqa_head:
+            in_channels: 384
+            hidden_channels: 32
+            
+optimizer:
+    lr: !!float 1e-3
+    backbone_lr_mult: !!float 1e-1
+    wd: 0.05
+        
+test_load_path: ./pretrained_weights/DOVER-Mobile.pth
+
+    
+        

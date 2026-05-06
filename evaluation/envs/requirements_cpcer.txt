@@ -1,0 +1,15 @@
+# MOVA Eval - cpCER metric (multi-speaker conversational accuracy)
+# Python 3.10+
+# Install: conda create -n mova_eval_cpcer python=3.10 -y && pip install -r requirements_cpcer.txt
+
+# Core
+numpy>=1.24.0
+requests>=2.28.0
+
+# cpCER computation
+jiwer>=3.0.0
+scipy>=1.10.0
+
+# DER computation (speaker_timestamp_der in speaker_metrics.py)
+pyannote.core>=5.0.0
+pyannote.metrics>=3.2

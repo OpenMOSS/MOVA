@@ -1,0 +1,56 @@
+# MOVA Eval - AV Quality + Lip Sync metrics
+# Python 3.10+, CUDA 12.x
+# Install: conda create -n mova_eval_av python=3.10 -y && pip install -r requirements_av.txt
+# Then install vendored packages:
+#   pip install -e ./models/imagebind --no-deps
+#   pip install -e ./models/dover --no-deps
+#   pip install -e ./models/pytorchvideo --no-deps
+#   pip install -e ./models/clap --no-deps
+#   pip install -e ./metrics/av_quality/av_bench --no-deps
+
+# Core
+torch>=2.3.0
+torchvision>=0.18.0
+torchaudio>=2.3.0,<2.9.0
+# IMPORTANT: torio.io.StreamingMediaDecoder (bundled with torchaudio<2.9) is required for
+# DeSync metric. torchaudio>=2.9 removes torio, causing fallback to decord decoder which
+# produces inconsistent DeSync scores.
+numpy>=1.24.0
+tqdm>=4.65.0
+
+# AV Quality model deps
+einops>=0.7.0
+timm>=1.0.12
+ftfy>=6.1.0
+regex>=2023.0
+iopath>=0.1.10
+omegaconf>=2.3.0
+pyyaml>=6.0
+torchlibrosa>=0.1.0
+parameterized>=0.8.0
+fvcore>=0.1.5
+
+# Video/image processing
+opencv-python-headless>=4.8.0
+decord>=0.6.0
+av>=10.0.0
+scikit-video>=1.1.11
+torchcodec>=0.1.0
+
+# Audio processing
+librosa>=0.10.0
+
+# Data
+pandas>=2.2.0
+
+# Visualization (AV-Align plots)
+matplotlib>=3.7.0
+
+# Misc
+colorlog>=6.0.0
+transformers>=4.45.0
+
+# Lip Sync deps
+python-speech-features>=0.6
+scipy>=1.10.0
+scenedetect>=0.6.0,<1.0.0
