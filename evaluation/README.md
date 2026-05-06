@@ -1,45 +1,6 @@
-<p align="center">
-    <img src="./assets/logo.png" width="400"/>
-</p>
-
-<div align="center">
-    <a href="https://github.com/OpenMOSS/MOVA"><img src="https://img.shields.io/badge/Github-Star-yellow?logo=Github&amp"></a>
-    <a href="https://huggingface.co/collections/OpenMOSS-Team/mova"><img src="https://img.shields.io/badge/Huggingface-Download-orange?logo=Huggingface&amp"></a>
-    <a href="https://mosi.cn/models/mova"><img src="https://img.shields.io/badge/Website-View-blue?logo=Website&amp"></a>
-    <a href="https://studio.mosi.cn/docs/models/mova?src=github"><img src="https://img.shields.io/badge/API-Apply-green?logo=OpenAI&amp"></a>
-    <a href="https://arxiv.org/abs/2602.08794">
-      <img src="https://img.shields.io/badge/Arxiv-2602.08794-red?logo=Arxiv&amp">
-    </a>
-</div>
-<div align="center">
-    <a href="https://discord.gg/J2BBgVMRVZ"><img src="https://img.shields.io/badge/Discord-Join-blueviolet?logo=discord&amp"></a>
-    <a href="https://x.com/Open_MOSS"><img src="https://img.shields.io/badge/X-Follow-blue?logo=x&amp"></a>
-    <a href="https://gist.github.com/user-attachments/assets/abf31f41-55d3-4e4e-9f25-966bf6d23fc1"><img src="https://img.shields.io/badge/Wechat-Join-green?logo=wechat&amp"></a>
-</div>
-
-# MOVA Eval
+# MOVA Evaluation Toolkit
 
 Evaluation toolkit for [**MOVA**](https://github.com/OpenMOSS/MOVA) (**MO**SS **V**ideo and **A**udio), providing a comprehensive suite of metrics for assessing synchronized audio-visual video generation quality.
-
-## 🎬 Demo
-
-<div align="center">
-  <video src="https://gist.github.com/user-attachments/assets/cee573cc-56ce-4987-beef-0b374e1ed3b7" width="70%" poster=""> </video>
-</div>
-
-Single person speech:
-<details>
-  <summary>Click to expand</summary>
-  <video src="https://gist.github.com/user-attachments/assets/118a6597-054b-4bb9-812a-c225e93f12f7" width="70%"></video>
-</details>
-
-Multi-person speech:
-<details>
-  <summary>Click to expand</summary>
-  <video src="https://gist.github.com/user-attachments/assets/a11b1d1e-b0da-4c45-9aeb-c74a64131b6d" width="70%"></video>
-</details>
-
-View more demos on our [website](https://mosi.cn/models/mova).
 
 ## Metrics Overview
 
@@ -96,7 +57,7 @@ To reproduce these results, ensure your input directory contains only a single c
 ## Directory Structure
 
 ```
-mova_eval/
+evaluation/
 ├── scripts/
 │   ├── run_eval.sh              # Main evaluation pipeline
 │   ├── setup_envs.sh            # Create conda environments
@@ -184,9 +145,7 @@ Each metric group requires specific dependencies. We provide two setup options:
 This avoids dependency conflicts between metric groups. We provide requirements files and setup scripts:
 
 ```bash
-# Clone this repo
-git clone https://github.com/Jecci-cmd/mova_eval.git
-cd mova_eval
+cd evaluation
 
 # Create 5 conda environments (one per metric group)
 bash scripts/setup_envs.sh
@@ -311,7 +270,7 @@ bash scripts/run_eval.sh \
     --resume
 ```
 
-> **Note:** This toolkit is evaluation-only. To generate videos with MOVA, see the [MOVA repository](https://github.com/OpenMOSS/MOVA).
+> **Note:** This toolkit is evaluation-only. To generate videos with MOVA, see the [MOVA repository root](../).
 
 ### Evaluation Types
 
