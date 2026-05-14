@@ -451,7 +451,8 @@ class AccelerateTrainer:
                     "v_loss": f"{avg_video_loss:.4f}",
                     "a_loss": f"{avg_audio_loss:.4f}",
                     "lr": f"{lr:.2e}",
-                })
+                }, refresh=False)
+                pbar.update(self.log_interval)
                 
                 accumulated_loss = 0.0
                 accumulated_video_loss = 0.0
@@ -460,8 +461,6 @@ class AccelerateTrainer:
             
             if self.global_step % self.save_interval == 0:
                 self._save_checkpoint()
-            
-            pbar.update(1)
         
         self._save_checkpoint(final=True)
         pbar.close()
