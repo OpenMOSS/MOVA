@@ -82,13 +82,13 @@ class TestMiniMaxConfig(unittest.TestCase):
         from config import MINIMAX_API_KEY, MINIMAX_BASE_URL, MINIMAX_MODEL
         self.assertIsInstance(MINIMAX_API_KEY, str)
         self.assertEqual(MINIMAX_BASE_URL, 'https://api.minimax.io/v1')
-        self.assertEqual(MINIMAX_MODEL, 'MiniMax-M2.7')
+        self.assertEqual(MINIMAX_MODEL, 'MiniMax-M3')
 
     def test_minimax_config_from_env(self):
         with patch.dict(os.environ, {
             'MINIMAX_API_KEY': 'test_key_123',
             'MINIMAX_BASE_URL': 'https://custom.api/v1',
-            'MINIMAX_MODEL': 'MiniMax-M2.5',
+            'MINIMAX_MODEL': 'MiniMax-M2.7',
         }):
             # Re-import to pick up env vars
             import importlib
@@ -96,7 +96,7 @@ class TestMiniMaxConfig(unittest.TestCase):
             importlib.reload(config)
             self.assertEqual(config.MINIMAX_API_KEY, 'test_key_123')
             self.assertEqual(config.MINIMAX_BASE_URL, 'https://custom.api/v1')
-            self.assertEqual(config.MINIMAX_MODEL, 'MiniMax-M2.5')
+            self.assertEqual(config.MINIMAX_MODEL, 'MiniMax-M2.7')
             # Reload with clean env
             for key in ['MINIMAX_API_KEY', 'MINIMAX_BASE_URL', 'MINIMAX_MODEL']:
                 os.environ.pop(key, None)

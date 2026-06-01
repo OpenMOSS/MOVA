@@ -89,7 +89,7 @@ MINIMAX_BASE_URL = os.environ.get(
 
 MINIMAX_MODEL = os.environ.get(
     'MINIMAX_MODEL',
-    'MiniMax-M2.7'
+    'MiniMax-M3'
 )
 
 # ============================================================================

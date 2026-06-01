@@ -201,7 +201,7 @@ def generate_image_prompt_qwen(
 def generate_image_prompt_minimax(
     user_input: str,
     api_key: str,
-    model: str = "MiniMax-M2.7",
+    model: str = "MiniMax-M3",
     base_url: str = None,
 ) -> str:
     """
@@ -210,7 +210,7 @@ def generate_image_prompt_minimax(
     Args:
         user_input: 用户原始输入
         api_key: MiniMax API Key
-        model: 模型名称，默认 MiniMax-M2.7
+        model: 模型名称，默认 MiniMax-M3
         base_url: API base URL（可选，默认 https://api.minimax.io/v1）
 
     Returns:

@@ -43,7 +43,7 @@ Edit `config.py` to set:
 - **API Keys** (optional, for Full Workflow):
   - `GEMINI_API_KEY` + `GEMINI_API_URL`: Gemini API (recommended; fill base URL when using proxy)
   - `DASHSCOPE_API_KEY` + `DASHSCOPE_BASE_URL`: Qwen/DashScope API (base URL for region, e.g. Singapore/US)
-  - `MINIMAX_API_KEY`: [MiniMax](https://platform.minimaxi.com/) API for prompt generation (OpenAI-compatible; uses MiniMax-M2.7 by default)
+  - `MINIMAX_API_KEY`: [MiniMax](https://platform.minimaxi.com/) API for prompt generation (OpenAI-compatible; uses MiniMax-M3 by default)
 
 > **Note (API Key Fallback):** If you do **not** provide a Gemini API key, the workflow will automatically use the Qwen (DashScope) API key to call qwen-plus and Z-Image for prompt generation and first frame generation. Alternatively, you can use a **MiniMax API key** (`MINIMAX_API_KEY`) for prompt rewriting and image prompt generation via MiniMax's OpenAI-compatible API. **We still recommend using a Gemini API key** for best quality.
 
@@ -115,7 +115,7 @@ export MOVA_MODEL_PATH="/path/to/your/MOVA-360p-hf"   # 或 MOVA-720p-hf
 - **API 密钥**（可选，完整工作流需要）：
   - `GEMINI_API_KEY` + `GEMINI_API_URL`：Gemini API（推荐；使用代理时需填写 base URL）
   - `DASHSCOPE_API_KEY` + `DASHSCOPE_BASE_URL`：通义千问 / DashScope API（base URL 可选，用于指定地域如新加坡/美国）
-  - `MINIMAX_API_KEY`：[MiniMax](https://platform.minimaxi.com/) API，用于提示词生成（OpenAI 兼容接口；默认使用 MiniMax-M2.7）
+  - `MINIMAX_API_KEY`：[MiniMax](https://platform.minimaxi.com/) API，用于提示词生成（OpenAI 兼容接口；默认使用 MiniMax-M3）
 
 > **说明（API 密钥回退）：** 若不提供 Gemini API 密钥，工作流会自动使用 Qwen（DashScope）API 密钥调用 qwen-plus 和 Z-Image 完成提示词生成和首帧图生成。也可使用 **MiniMax API 密钥**（`MINIMAX_API_KEY`）通过 MiniMax 的 OpenAI 兼容 API 完成提示词改写和首帧图提示词生成。**我们仍推荐使用 Gemini API 密钥**以获得更好效果。
 

@@ -266,7 +266,7 @@ def generate_video_description_minimax(
     user_input: str,
     first_frame_elements: str,
     api_key: str,
-    model: str = "MiniMax-M2.7",
+    model: str = "MiniMax-M3",
     base_url: str = None,
 ) -> str:
     """
@@ -277,7 +277,7 @@ def generate_video_description_minimax(
         user_input: 用户原始输入
         first_frame_elements: 首帧图视觉元素描述
         api_key: MiniMax API Key
-        model: 模型名称，默认 MiniMax-M2.7
+        model: 模型名称，默认 MiniMax-M3
         base_url: API base URL（可选，默认 https://api.minimax.io/v1）
 
     Returns:
@@ -365,7 +365,7 @@ def main():
         '--model',
         type=str,
         default=None,
-        help='模型名称（Gemini 默认: gemini-2.5-pro；Qwen 默认: qwen-plus；MiniMax 默认: MiniMax-M2.7）'
+        help='模型名称（Gemini 默认: gemini-2.5-pro；Qwen 默认: qwen-plus；MiniMax 默认: MiniMax-M3）'
     )
     parser.add_argument(
         '--minimax-api-key',
