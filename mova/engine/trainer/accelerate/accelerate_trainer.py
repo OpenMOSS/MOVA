@@ -9,6 +9,7 @@ Supports:
 
 import os, re
 import torch
+import torch_npu
 from tqdm import tqdm
 
 try:
@@ -411,6 +412,8 @@ class AccelerateTrainer:
                 loss = loss_dict["loss"]
                 
                 self.accelerator.backward(loss)
+                # Synchronize NPU stream to avoid async ordering issues with DP replicate training.
+                torch_npu.npu.current_stream().synchronize()
                 
                 if self.gradient_clip_norm > 0:
                     if self.accelerator.sync_gradients:
