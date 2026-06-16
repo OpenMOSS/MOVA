@@ -9,6 +9,8 @@ __pycache__/
 checkpoints/
 samples/
 data/
+!evaluation/metrics/av_quality/av_bench/data/
+!evaluation/metrics/av_quality/av_bench/data/**
 tmp/
 demo/
 .vscode/
