@@ -521,6 +521,37 @@ class AccelerateTrainer:
             self.accelerator.save_state(os.path.join(step_dir, "accelerator"))
 
     
+    def _load_model_weights_from_checkpoint(self, checkpoint_path):
+        """
+        Load trainable module weights saved by _save_checkpoint.
+        Weights are saved as {module_name}/diffusion_pytorch_model.bin per module.
+        """
+        unwrapped_model = self.accelerator.unwrap_model(self.model)
+        full_state_dict = {}
+        loaded_modules = []
+
+        for module_name in self.train_modules:
+            bin_path = os.path.join(checkpoint_path, module_name, "diffusion_pytorch_model.bin")
+            if os.path.isfile(bin_path):
+                module_state = torch.load(bin_path, map_location="cpu")
+                for key, value in module_state.items():
+                    full_state_dict[f"{module_name}.{key}"] = value
+                loaded_modules.append(module_name)
+            else:
+                raise FileNotFoundError(
+                    f"[Resume] FATAL: missing weight file for module '{module_name}': {bin_path}"
+                )
+
+        missing_keys, unexpected_keys = unwrapped_model.load_state_dict(
+            full_state_dict, strict=False
+        )
+
+        if self.is_main_process:
+            print(f"[Resume] Loaded {len(full_state_dict)} model parameters from {len(loaded_modules)} modules: {loaded_modules}")
+            print(f"[Resume] {len(missing_keys)} missing keys (expected: frozen modules), first 5: {list(missing_keys)[:5]}")
+            if unexpected_keys:
+                print(f"[Resume] ⚠️  {len(unexpected_keys)} unexpected keys: {unexpected_keys[:5]}")
+
     def _resume_checkpoint(self, checkpoint_path: str):
         """Resume checkpoint"""
         state_path = os.path.join(checkpoint_path, "trainer_state.pt")
@@ -528,7 +559,11 @@ class AccelerateTrainer:
             state = torch.load(state_path, map_location="cpu")
             self.global_step = state["global_step"]
             self.epoch = state["epoch"]
-        
+
+        # Load model weights (must happen before optimizer/scheduler restore)
+        if not self.use_lora:
+            self._load_model_weights_from_checkpoint(checkpoint_path)
+
         accelerator_path = os.path.join(checkpoint_path, "accelerator")
         if os.path.exists(accelerator_path):
             if self.use_fsdp:
@@ -542,11 +577,10 @@ class AccelerateTrainer:
             else:
                 self.accelerator.load_state(accelerator_path)
 
-
         if self.use_lora:
             from mova.engine.trainer.accelerate.lora_utils import load_lora_weights
             load_lora_weights(self.model, checkpoint_path)
-        
+
         if self.is_main_process:
             print(f"[Resume] Loaded from {checkpoint_path}, step={self.global_step}")
 
