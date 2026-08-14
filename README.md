@@ -353,4 +353,5 @@ We would like to thank the contributors to [Wan](https://github.com/Wan-Video/Wa
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/chart?repos=OpenMOSS%2FMOVA&type=date&legend=top-left&sealed_token=Fi6zs0IAK2C1q00XfDRlsR6jRwxF5O1fYBIeWcCGZ2bDqbHZpBrJlNs3shnvYDo_q92trz5pFAwFKA-bBwakeFUxAABDbq_M-wcJWTBguotr8hw7A1hVDQ)](https://www.star-history.com/?repos=OpenMOSS%2FMOVA&type=date&legend=top-left)
+<!-- star-history:start -->
+<!-- star-history:end -->
