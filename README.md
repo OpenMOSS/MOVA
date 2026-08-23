@@ -354,4 +354,12 @@ We would like to thank the contributors to [Wan](https://github.com/Wan-Video/Wa
 ## Star History
 
 <!-- star-history:start -->
+<p align="center">
+  <a href="https://github.com/OpenMOSS/MOVA/stargazers">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/OpenMOSS/MOVA/star-history-assets/assets/star-history/star-history-dark.svg">
+      <img alt="MOVA star history" src="https://raw.githubusercontent.com/OpenMOSS/MOVA/star-history-assets/assets/star-history/star-history-light.svg">
+    </picture>
+  </a>
+</p>
 <!-- star-history:end -->
