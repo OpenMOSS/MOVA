@@ -16,7 +16,7 @@ Evaluation toolkit for [**MOVA**](https://github.com/OpenMOSS/MOVA) (**MO**SS **
 | 8 | **CLAP Score** | `metrics/audio_is_clap/eval_audio_is_clap.py` | Audio-text alignment (cosine similarity) | Higher |
 | 9 | **LSE-D** | `models/wav2lip/evaluation/syncnet_python/eval_lip_sync.py` | Lip sync error distance (SyncNet) | Lower |
 | 10 | **LSE-C** | `models/wav2lip/evaluation/syncnet_python/eval_lip_sync.py` | Lip sync error confidence (SyncNet) | Higher |
-| 11 | **cpCER** | `metrics/cpcer/eval_cpcer.py` | Multi-speaker conversational accuracy (MOSS Transcribe Diarize + Hungarian-matched CER) | Lower |
+| 11 | **cpCER** | `metrics/cpcer/eval_cpcer.py` | Multi-speaker conversational accuracy (MOSS-Transcribe-Diarize + Hungarian-matched CER) | Lower |
 
 ## Reproducibility Verification
 
@@ -48,11 +48,11 @@ To reproduce these results, ensure your input directory contains only a single c
 - IS, DeSync, and IB-Score are aggregated as the mean of per-category means across set1, set2, and set3.
 - DNSMOS (a speech quality metric) is evaluated on set3 only, which contains exclusively speech videos.
 - **LSE-D and LSE-C**: The paper-reported LSE-D/LSE-C scores are derived from the dedicated evaluation pipeline (i.e., the model variant and inference configuration used for benchmarking), rather than the Arena deployment. The Arena inference server employs a different production configuration optimized for serving, which may yield slightly different video outputs and thus different lip-sync scores. Since mova_eval replicates the evaluation pipeline, LSE-D and LSE-C achieve exact match (0.0% relative error) with the paper.
-- **cpCER**: The cpCER score reported in the paper (0.177, Table 4) was measured using an internal beta version of the MOSS Transcribe Diarize (MTD) model. The publicly released MTD version adopted in this toolkit produces improved speaker diarization, yielding a lower (better) cpCER of 0.156. This discrepancy is therefore attributable to the ASR model version difference rather than evaluation methodology. Among the 132 MyBench items, only 27 belong to the `multi-speaker` category and contain multi-speaker conversational dialogues with ground-truth reference transcripts — cpCER can only be computed on these 27 videos, as the other categories (movie, shot-effect, anime, sports, games, others) do not necessarily feature multi-speaker conversations.
+- **cpCER**: The cpCER score reported in the paper (0.177, Table 4) was measured using an internal beta version of the MOSS-Transcribe-Diarize (MTD) model. The publicly released MTD version adopted in this toolkit produces improved speaker diarization, yielding a lower (better) cpCER of 0.156. This discrepancy is therefore attributable to the ASR model version difference rather than evaluation methodology. Among the 132 MyBench items, only 27 belong to the `multi-speaker` category and contain multi-speaker conversational dialogues with ground-truth reference transcripts — cpCER can only be computed on these 27 videos, as the other categories (movie, shot-effect, anime, sports, games, others) do not necessarily feature multi-speaker conversations.
 
 ### MyBench
 
-**MyBench** is our constructed evaluation benchmark with **132 samples** across **7 categories**: multi-speaker (27), movie (12), shot-effect (30), anime (20), sports (20), games (20), and others (3). It is designed to evaluate joint video–audio generation in realistic and challenging scenarios, complementing Verse-Bench with diverse video generation categories including multi-speaker interaction, movie-style narratives, sports competitions, game livestreams, camera motion sequences, and anime-style content. MyBench is also used in [MOVA Arena](https://mosi.cn/models/mova) comparisons. The multi-speaker reference transcripts for cpCER evaluation are provided at `metrics/cpcer/references.txt`.
+**MyBench** is our constructed evaluation benchmark with **132 samples** across **7 categories**: multi-speaker (27), movie (12), shot-effect (30), anime (20), sports (20), games (20), and others (3). It is designed to evaluate joint video–audio generation in realistic and challenging scenarios, complementing Verse-Bench with diverse video generation categories including multi-speaker interaction, movie-style narratives, sports competitions, game livestreams, camera motion sequences, and anime-style content. MyBench is also used in [MOVA Arena](https://www.moss-ai.com/models/mova) comparisons. The multi-speaker reference transcripts for cpCER evaluation are provided at `metrics/cpcer/references.txt`.
 
 ## Directory Structure
 
@@ -344,25 +344,25 @@ For MyBench cpCER evaluation, we provide `metrics/cpcer/references.txt` containi
 
 ### API Configuration
 
-The script uses the `moss-transcribe-diarize` model on the studio.mosi.cn transcription API. Key configuration details:
+The script uses the `moss-transcribe-diarize` model via the **MOSS-Transcribe-Diarize** transcription API (see [MOSS API Multi-Speaker Transcription Docs](https://platform.moss.cn/en/docs/scenarios/transcribe-diarization)). Key configuration details:
 
-- **Endpoint**: `https://studio.mosi.cn/api/v1/audio/transcriptions`
+- **Endpoint**: Configured via `CPCER_ASR_API_URL` (defaults to the legacy JSON transcription endpoint in `metrics/cpcer/eval_cpcer.py`; override with `--asr_api_url` or `CPCER_ASR_API_URL` if using a custom/self-hosted endpoint)
 - **Model**: `moss-transcribe-diarize`
 - **Prompt parameter**: Use `"prompt"` (not `"text"`) in the API request payload. The `"text"` field is treated as a Whisper-style initial prompt and does not trigger diarization, resulting in speaker-unaware transcriptions and inflated cpCER.
 - **Response format**: The API returns structured JSON with `asr_transcription_result.segments` containing per-segment speaker labels and timestamps. The `full_text` field is plain text without speaker tags — the script reconstructs `[S01] [S02]` tagged text from `segments`.
 
 Environment variables:
 ```bash
-export CPCER_ASR_API_URL="https://studio.mosi.cn/api/v1/audio/transcriptions"  # default
+export CPCER_ASR_API_URL="<your-asr-api-endpoint>"  # optional override
 export CPCER_ASR_API_KEY="sk-your-api-key-here"
 export CPCER_ASR_MODEL="moss-transcribe-diarize"  # default
 ```
 
 ### Getting the API Key
 
-cpCER requires **MOSS Transcribe Diarize** API access ([studio.mosi.cn](https://studio.mosi.cn)):
+cpCER requires **MOSS-Transcribe-Diarize** API access via [MOSS API](https://platform.moss.cn/) (see the [Multi-Speaker Transcription API docs](https://platform.moss.cn/en/docs/scenarios/transcribe-diarization)):
 
-1. Register at [https://studio.mosi.cn](https://studio.mosi.cn) (phone or WeChat login)
+1. Register and sign in at [MOSS API](https://platform.moss.cn/)
 2. Go to **API Keys** → **Create API Key**, copy the key
 3. Configure:
 
