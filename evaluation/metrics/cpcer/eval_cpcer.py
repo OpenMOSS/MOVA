@@ -5,7 +5,7 @@ cpCER (Concatenated Permutation Character Error Rate) Evaluation Script
 
 Evaluates multi-speaker conversational accuracy in generated videos by:
 1. Extracting audio from videos
-2. Running ASR (MOSS Transcribe Diarize) to transcribe with speaker tags ([S01], [S02], etc.)
+2. Running ASR (MOSS-Transcribe-Diarize) to transcribe with speaker tags ([S01], [S02], etc.)
 3. Comparing predictions against reference transcripts using cpCER
 
 cpCER measures:
@@ -116,7 +116,7 @@ def file_to_data_uri(file_path: str) -> str:
 
 
 def call_remote_asr(audio_data_uri: str, api_url: str, api_key: str, model: str) -> str:
-    """Call MOSS Transcribe Diarize API and return formatted prediction text."""
+    """Call MOSS-Transcribe-Diarize API and return formatted prediction text."""
     payload = {
         "prompt": FIXED_PROMPT,
         "model": model,
@@ -161,7 +161,7 @@ def call_remote_asr(audio_data_uri: str, api_url: str, api_key: str, model: str)
         if k in data and isinstance(data[k], str) and ("[S0" in data[k] or "[S1" in data[k]):
             return data[k]
 
-    # Structured response from studio.mosi.cn API: reconstruct with speaker tags from segments
+    # Structured response from MOSS-Transcribe-Diarize API: reconstruct with speaker tags from segments
     asr_result = data.get("asr_transcription_result", {})
     segments = asr_result.get("segments", [])
     if segments:
@@ -272,7 +272,7 @@ def main():
 
     if not api_key:
         print("Error: ASR API key is required. Set CPCER_ASR_API_KEY env var or use --asr_api_key.")
-        print("  Get your API key at: https://studio.mosi.cn")
+        print("  Get your API key at: https://platform.moss.cn/")
         sys.exit(1)
 
     print("cpCER Evaluation Configuration:")

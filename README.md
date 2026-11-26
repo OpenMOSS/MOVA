@@ -3,10 +3,9 @@
 </p>
 
 <div align="center">
+    <a href="https://www.moss-ai.com/models/mova"><img src="https://img.shields.io/badge/MOSS%20AI-Website-blue?logo=Website&amp"></a>
     <a href="https://github.com/OpenMOSS/MOVA"><img src="https://img.shields.io/badge/Github-Star-yellow?logo=Github&amp"></a>
     <a href="https://huggingface.co/collections/OpenMOSS-Team/mova"><img src="https://img.shields.io/badge/Huggingface-Download-orange?logo=Huggingface&amp"></a>
-    <a href="https://mosi.cn/models/mova"><img src="https://img.shields.io/badge/Website-View-blue?logo=Website&amp"></a>
-    <a href="https://studio.mosi.cn/docs/models/mova?src=github"><img src="https://img.shields.io/badge/API-Apply-green?logo=OpenAI&amp"></a>
     <a href="https://arxiv.org/abs/2602.08794">
       <img src="https://img.shields.io/badge/Arxiv-2602.08794-red?logo=Arxiv&amp">
     </a>
@@ -18,7 +17,7 @@
 </div>
 
 ## MOVA: Towards Scalable and Synchronized Video–Audio Generation
-**MOVA** (**MO**SS **V**ideo and **A**udio) generates video and synchronized audio in a single model. This repository provides model weights, inference, training, LoRA fine-tuning, and evaluation workflows.
+**MOVA** (**MO**SS **V**ideo and **A**udio) is an open-source foundation model for synchronized video and audio generation, released by [MOSS AI](https://www.moss-ai.com/), [OpenMOSS](https://openmoss.ai/), and the Shanghai Innovation Institute (SII). It generates video and synchronized audio in a single model, and this repository provides model weights, inference, training, LoRA fine-tuning, and evaluation workflows.
 
 **Start here:** [Quick start](#quick-start) · [Watch samples](#demo) · [Model weights](https://huggingface.co/collections/OpenMOSS-Team/mova) · [LoRA fine-tuning](#lora-fine-tuning) · [Evaluation](#evaluation)
 
@@ -36,7 +35,7 @@
 <details>
 <summary>Earlier updates</summary>
 
-- 2026/03/09: 🎉**MOVA API** is now available! Apply for your API key at [studio.mosi.cn](https://studio.mosi.cn/docs/models/mova?src=github) to start generating videos programmatically.
+- 2026/03/09: 🎉**MOVA API** preview was launched (this hosted API preview has since been discontinued; please use the open-source checkpoints and local/SGLang serving workflows below).
 - 2026/03/09: 🎉**ComfyUI support** is here! Thanks to [@richservo](https://github.com/richservo), you can now use MOVA in ComfyUI at low cost via [comfyui-mova](https://github.com/richservo/comfyui-mova).
 - 2026/02/10: 🎉We released **MOVA** [technical report](https://arxiv.org/abs/2602.08794) and update [inference workflow](https://github.com/OpenMOSS/MOVA/pull/29).
 - 2026/01/29: 🎉We released **MOVA**, an open-source foundation model for high-fidelity synchronized video–audio generation!!!
@@ -60,7 +59,7 @@ Multi-person speech:
   <video src="https://gist.github.com/user-attachments/assets/a11b1d1e-b0da-4c45-9aeb-c74a64131b6d" width="70%"></video>
 </details>
 
-View more demos on our [website](https://mosi.cn/models/mova).
+View more demos on our [website](https://www.moss-ai.com/models/mova).
 
 ## 🚀Quick Start
 ### Environment Setup
@@ -249,12 +248,6 @@ We provide an **[AI-assisted video generation workflow](./workflow)** for end-to
 
 See the [**workflow README**](./workflow/README.md) for setup, configuration (SGLang server, API keys), and usage.
 
-## API Access
-
-MOVA is available as a hosted API on our platform. You can apply for an API key and start generating synchronized video-audio content without managing any infrastructure.
-
-**Apply here**: [studio.mosi.cn/docs/models/mova](https://studio.mosi.cn/docs/models/mova?src=github)
-
 ## ComfyUI Integration
 
 MOVA is supported in [ComfyUI](https://github.com/comfyanonymous/ComfyUI) through the community plugin [comfyui-mova](https://github.com/richservo/comfyui-mova) by [@richservo](https://github.com/richservo). It provides two nodes — **MOVA Model Loader** and **MOVA Generate** — for both Image-to-Video-Audio (I2VA) and Text-to-Video-Audio (T2VA) workflows.
@@ -333,7 +326,6 @@ All peak usage numbers below are measured on **360p, 8-second** video training s
 - [x] SGLang Integration
 - [x] Generation Workflow
 - [x] Technical Report
-- [x] API Access
 - [x] ComfyUI Integration
 - [x] Arena Benchmark
 - [x] Evaluation Code
