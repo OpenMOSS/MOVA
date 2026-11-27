@@ -348,17 +348,17 @@ class MOVA(DiffusionPipeline):
         cfg_merge = False
         audio_num_samples = int(self.audio_sample_rate * num_frames / video_fps)
 
-        # self.scheduler.set_timesteps(num_inference_steps, denoising_strength=denoising_strength, shift=sigma_shift)
-        # self.scheduler.set_pair_postprocess_by_name(
-        #     "dual_sigma_shift",
-        #     visual_shift=visual_shift,
-        #     audio_shift=audio_shift,
-        # )
-        
         device = self._execution_device
+        # Generate on CPU first so seeded noise is reproducible across execution devices.
+        generator = None if seed is None else torch.Generator(device="cpu").manual_seed(int(seed))
 
         # 4. Prepare timesteps
-        self.scheduler.set_timesteps(num_inference_steps, device=device)
+        self.scheduler.set_timesteps(
+            num_inference_steps,
+            denoising_strength=denoising_strength,
+            shift=sigma_shift,
+            device=device,
+        )
         scheduler_support_audio = hasattr(self.scheduler, "get_pairs")
         if scheduler_support_audio:
             audio_scheduler = self.scheduler
@@ -379,7 +379,7 @@ class MOVA(DiffusionPipeline):
             num_frames,
             torch.float32,
             device,
-            generator=None,
+            generator=generator,
             latents=None,
             last_image=None,
         )
@@ -390,7 +390,7 @@ class MOVA(DiffusionPipeline):
             audio_num_samples,
             torch.float32,
             device,
-            generator=None,
+            generator=generator,
             latents=None,
         )
 
